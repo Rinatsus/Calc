@@ -1,8 +1,118 @@
 from Calculator import *
-from Config import *
-
+from Memory import *
 
 class Scientific(Calculator):
-    def __init__(self):
-        super(Scientific, self).__init__()
+    def __init__(self, window):
+        super(Scientific, self).__init__(window)
         self.set_name(NAME + SCIENTIFIC)
+        self.memory = Memory(window)
+
+    def solve_sin(self):
+        temp_op = str(sin(eval(self.operation)))
+        self.operation = temp_op
+        self.get_result()
+
+    def solve_cos(self):
+        temp_op = str(cos(eval(self.operation)))
+        self.operation = temp_op
+        self.get_result()
+
+    def solve_tan(self):
+        temp_op = str(tan(eval(self.operation)))
+        self.operation = temp_op
+        self.get_result()
+
+    def solve_factorial(self):
+        temp_op = str(fac(eval(self.operation)))
+        self.operation = temp_op
+        self.get_result()
+
+    def pow(self, num):
+        temp = str(pow(eval(self.operation), num))
+        self.operation = temp
+        self.get_result()
+
+    def solve_ten_in_pow(self):
+        temp = str(pow(10, eval(self.operation)))
+        self.operation = temp
+        self.get_result()
+
+    def solve_ln(self):
+        temp = str(ln(eval(self.operation)))
+        self.operation = temp
+        self.get_result()
+
+    def solve_log10(self):
+        temp = str(log(eval(self.operation)))
+        self.operation = temp
+        self.get_result()
+
+    def solve_abs(self):
+        temp = str(abs(eval(self.operation)))
+        self.operation = temp
+        self.get_result()
+
+    def solve_exp(self):
+        temp = str(exp(eval(self.operation)))
+        self.operation = temp
+        self.get_result()
+
+    def add_memory_cell(self):
+        temp = '0' if self.operation == '' else eval(self.operation)
+        self.memory.add_cell(temp)
+
+    def extend(self):
+        # row 2
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="sin(n)",
+                  command=self.solve_sin).grid(row=2, column=1, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="cos(n)",
+                  command=self.solve_cos).grid(row=2, column=2, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="tan(n)",
+                  command=self.solve_tan).grid(row=2, column=3, sticky="nsew")
+
+        # row 3
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="(",
+                  command=lambda: self.click('(')).grid(row=3, column=2, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text=")",
+                  command=lambda: self.click(')')).grid(row=3, column=3, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="n!",
+                  command=self.solve_factorial).grid(row=3, column=1, sticky="nsew")
+
+        # row 9
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="10\u207F",
+                  command=self.solve_ten_in_pow).grid(row=9, column=0, sticky="nsew")
+
+        # row 8
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="ln(n)",
+                  command=self.solve_ln).grid(row=8, column=0, sticky="nsew")
+
+        # row 7
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="log(n)",
+                  command=self.solve_log10).grid(row=7, column=0, sticky="nsew")
+
+        # row 6
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="n\u1D61",
+                  command=lambda: self.click('**')).grid(row=6, column=0, sticky="nsew")
+        # row 5
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="n\u00B2",
+                  command=lambda: self.pow(2)).grid(row=5, column=0, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text=PI,
+                  command=lambda: self.click(PI, f"{pi}")).grid(row=5, column=4, sticky="nsew")
+
+        # row 4
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="e",
+                  command=lambda: self.click('e', f"{e}")).grid(row=4, column=0, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="e",
+                  command=lambda: self.click('e', f"{e}")).grid(row=4, column=0, sticky="nsew")
+        tk.Button(self.window, MEMORY_BTN_PARAMS, text='M',
+                  command=self.add_memory_cell).grid(row=4, column=4, sticky="nsew")
+        # row 3
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="exp",
+                  command=self.solve_exp).grid(row=3, column=0, sticky="nsew")
+        tk.Button(self.window, MEMORY_BTN_PARAMS, text='M-',
+                  command=lambda: self.memory.substrate_result(self.get_result())).grid(row=3, column=4, sticky="nsew")
+        # row 2
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text='|x|',
+                  command=self.solve_abs).grid(row=2, column=0, sticky="nsew")
+        tk.Button(self.window, MEMORY_BTN_PARAMS, text='M+',
+                  command=lambda: self.memory.add_result(self.get_result())).grid(row=2, column=4, sticky="nsew")
