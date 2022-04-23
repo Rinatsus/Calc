@@ -3,7 +3,7 @@ import math
 
 
 def get_int_or_float(num):
-    if abs(int(num) - num) == 0:
+    if abs(int(num) - float(num)) == 0:
         return int(num)
     else:
         return float(num)
