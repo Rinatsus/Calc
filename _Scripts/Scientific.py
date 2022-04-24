@@ -3,10 +3,11 @@ from Memory import *
 
 
 class Scientific(Calculator):
-    def __init__(self, window):
+    def __init__(self, window: tk.Tk, menu = None):
         super(Scientific, self).__init__(window)
         self.set_name(NAME + SCIENTIFIC)
-        self.place_memory()
+        if menu is not None:
+            self.place_memory(menu)
 
     def solve_sin(self):
         temp_op = str(sin(eval(self.operation)))
@@ -59,11 +60,11 @@ class Scientific(Calculator):
         self.get_result()
 
     def add_memory_cell(self):
-        temp = '0' if self.operation == '' else eval(self.operation)
-        self.memory.add_cell(temp)
+        value = '0' if self.operation == '' else sym.sympify(self.operation)
+        self.memory.add_cell(value)
 
-    def place_memory(self):
-        self.memory = Memory(self.window)
+    def place_memory(self, menu: tk.Menu):
+        self.memory = Memory(self.window, menu)
         tk.Button(self.window, MEMORY_BTN_PARAMS, text='M+',
                   command=lambda: self.memory.add_result(self.get_result())).grid(row=2, column=4, sticky="nsew")
         tk.Button(self.window, MEMORY_BTN_PARAMS, text='M-',
