@@ -1,35 +1,40 @@
 from Scientific import *
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 import matplotlib.pyplot as plt
-import matplotlib
 import numpy as np
+import os
 
 
 class Plotting(Scientific):
-    def __init__(self, window):
+    def __init__(self, window, menu: tk.Menu):
         self.x = sym.Symbol('x')
-        self.y = sym.Symbol('y')
+        self.menu = menu
         self.points_x = []
         self.points_y = []
         self.roots = []
         super(Plotting, self).__init__(window)
         self.set_name(NAME + PLOTTING)
+        self.figure, self.plot_axis = plt.subplots()
+        self.place_menu()
 
-        self.fig, self.ax = plt.subplots()
-        self.ax.minorticks_on()
-        self.ax.grid(which='minor',
-                     color='k',
-                     linestyle=':')
+        self.canvas = FigureCanvasTkAgg(self.figure, master=self.window)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().grid(row=0, rowspan=10, column=10, padx=10, ipadx=40, ipady=20)
 
-        axis = plt.gca()
-        axis.axhline(y=0, color='k')
-        axis.axvline(x=0, color='k')
+        toolbarFrame = tk.Frame(master=self.window)
+        toolbarFrame.grid(row=10, column=10)
+        NavigationToolbar2Tk(self.canvas, toolbarFrame)
 
-        self.show_plot()
+        self.draw_axis()
 
     def equal(self, callback=None):
+        try:
+            self.operation = get_formatted_expression(self.operation)
+        except Exception:
+            ctypes.windll.user32.MessageBoxW(0, u"Error", u"Invalid operation", 0)
+            return
+
         self.points_x = []
-        self.operation = get_formatted_expression(self.operation)
         self.input_field.set(self.operation)
         self.roots = sym.solve(sym.Eq(self.operation, 0), self.x)
         self.roots = sorted(self.roots)
@@ -37,11 +42,20 @@ class Plotting(Scientific):
         for i in range(len(self.roots) - 1):
             self.points_x = np.r_[self.points_x,
                                   np.linspace(float(self.roots[i].n()), float(self.roots[i + 1].n()), 20)]
-        self.points_y = get_points(self.points_x, self.operation)
+        self.points_y = interpolate(self.points_x, self.operation)
 
         self.show_plot()
 
-        print(self.roots)
+    def draw_axis(self):
+        self.plot_axis.clear()
+        self.plot_axis.minorticks_on()
+        self.plot_axis.grid(which='minor',
+                            color='k',
+                            linestyle=':')
+
+        axis = plt.gca()
+        axis.axhline(y=0, color='k')
+        axis.axvline(x=0, color='k')
 
     def place_memory(self):
         pass
@@ -51,22 +65,74 @@ class Plotting(Scientific):
         super(Plotting, self).hide()
 
     def show_plot(self):
-        self.ax.plot(self.points_x, self.points_y)
-        # specify the window as master
-        canvas = FigureCanvasTkAgg(self.fig, master=self.window)
-        canvas.draw()
-        canvas.get_tk_widget().grid(row=0, rowspan=10, column=10, padx=10, ipadx=40, ipady=20)
-
-        # navigation toolbar
-        toolbarFrame = tk.Frame(master=self.window)
-        toolbarFrame.grid(row=10, column=10)
-        toolbar = NavigationToolbar2Tk(canvas, toolbarFrame)
+        self.plot_axis.plot(self.points_x, self.points_y)
+        self.canvas.draw()
 
     def extend(self):
-        super(Plotting, self).extend()
         tk.Button(self.window, PLOTTING_BTN_PARAMS, text=f"{self.x}",
-                  command=lambda: self.click(f"{self.x}")).grid(row=2, column=4, sticky="nsew")
-        tk.Button(self.window, PLOTTING_BTN_PARAMS, text=f"{self.y}",
-                  command=lambda: self.click(f"{self.y}")).grid(row=3, column=4, sticky="nsew")
+                  command=lambda: self.click(f"{self.x}")).grid(row=4, column=4, sticky="nsew")
         tk.Button(self.window, PLOTTING_BTN_PARAMS, text='=',
-                  command=lambda: self.click('=')).grid(row=4, column=4, sticky="nsew")
+                  command=lambda: self.click('=')).grid(row=5, column=4, sticky="nsew")
+
+        # row 2
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="sin(n)",
+                  command=lambda: self.click('sin(')).grid(row=2, column=1, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="cos(n)",
+                  command=lambda: self.click('cos(')).grid(row=2, column=2, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="tan(n)",
+                  command=lambda: self.click('tan(')).grid(row=2, column=3, sticky="nsew")
+
+        # row 3
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="(",
+                  command=lambda: self.click('(')).grid(row=3, column=2, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text=")",
+                  command=lambda: self.click(')')).grid(row=3, column=3, sticky="nsew")
+
+        # row 8
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="ln(n)",
+                  command=lambda: self.click('ln(')).grid(row=2, column=4, sticky="nsew")
+
+        # row 7
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="log(n)",
+                  command=lambda: self.click('log(')).grid(row=3, column=4, sticky="nsew")
+
+        # row 6
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="n\u1D61",
+                  command=lambda: self.click('**')).grid(row=5, column=1, sticky="nsew")
+        tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text=PI,
+                  command=lambda: self.click(PI, f"{pi}")).grid(row=3, column=1, sticky="nsew")
+
+    def clear(self):
+        self.plot_axis.clear()
+        self.draw_axis()
+        self.canvas.draw()
+
+    def load(self):
+        if os.path.exists(PLOT_DATA_PATH) == False:
+            return
+
+        with open(PLOT_DATA_PATH, 'r') as file:
+            self.operation = file.readline()
+            self.input_field.set(self.operation)
+            self.equal()
+
+    def save(self):
+        with open(PLOT_DATA_PATH, 'w') as file:
+            file.write(str(self.operation))
+
+    def delete(self):
+        if not os.path.exists(PLOT_DATA_PATH):
+            return
+
+        os.remove(PLOT_DATA_PATH)
+        self.clear()
+
+    def place_menu(self):
+        plot_menu = tk.Menu(self.menu, tearoff=0)
+        plot_menu.add_command(label="SaveLast", command=self.save)
+        plot_menu.add_command(label="LoadLast", command=self.load)
+        plot_menu.add_separator()
+        plot_menu.add_command(label="Delete", command=self.delete)
+        plot_menu.add_command(label="Clear", command=self.clear)
+        self.menu.add_cascade(label="Plot", menu=plot_menu)
+        self.window.config(menu=self.menu)
