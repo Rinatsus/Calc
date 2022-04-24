@@ -21,14 +21,13 @@ class Window:
 
     def show_scientific(self):
         self.close_last()
-
-        self.activeCalc = Scientific(self.window)
+        self.activeCalc = Scientific(self.window, self.menu)
         self.show_new()
 
     def show_plotting(self):
         self.close_last()
 
-        self.activeCalc = Plotting(self.window)
+        self.activeCalc = Plotting(self.window, self.menu)
         self.show_new()
 
     def close_last(self):
@@ -43,13 +42,13 @@ class Window:
             self.window = tk.Tk()
 
     def place_menu(self):
-        menu = tk.Menu(self.window)
-        file_menu = tk.Menu(menu, tearoff=0)
+        self.menu = tk.Menu(self.window)
+        file_menu = tk.Menu(self.menu, tearoff=0)
 
         file_menu.add_command(label="Scientific", command=self.show_scientific)
         file_menu.add_command(label="Common", command=self.show_common)
         file_menu.add_command(label="Plotting", command=self.show_plotting)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.window.destroy)
-        menu.add_cascade(label="Mode", menu=file_menu)
-        self.window.config(menu=menu)
+        self.menu.add_cascade(label="Mode", menu=file_menu)
+        self.window.config(menu=self.menu)
