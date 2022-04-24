@@ -2,6 +2,9 @@ import tkinter as tk
 from Config import *
 from Constans import *
 import sympy as sym
+import  ctypes
+
+
 
 class Calculator:
     def __init__(self, window):
@@ -25,9 +28,11 @@ class Calculator:
         self.window.destroy()
 
     def equal(self, callback=None):
-
-        self.operation = self.get_result()
-
+        try:
+            self.operation = self.get_result()
+        except Exception:
+            ctypes.windll.user32.MessageBoxW(0, u"Error", u"Invalid operation", 0)
+            return
 
         if callback is not None:
             callback()
@@ -44,7 +49,7 @@ class Calculator:
         self.window.title(name)
 
     def get_result(self):
-        if (self.operation == ''):
+        if self.operation == '':
             self.operation = '0'
 
         temp = sym.sympify(self.operation)
@@ -56,9 +61,21 @@ class Calculator:
         if val == '':
             val = char
         self.operation = str(self.operation)
+        inp = self.input_field.get()
+        if (inp == '0' or inp == '') and char == DOT:
+            self.clear_all()
+            self.input_field.set(str('0.'))
+            self.operation += str('0.')
+            return
+
+        if (inp == '0' or inp == '') and CHARS.__contains__(char):
+            return
+
+        if inp == '0':
+            self.clear_all()
+
         self.input_field.set(str(self.operation) + char)
         self.operation += str(val)
-
 
     def change_sign(self):
         if self.operation[0] == '-':
@@ -83,7 +100,7 @@ class Calculator:
         self.get_result()
 
     def one_divide(self):
-        temp = str(eval(self.operation))
+        temp = str(sym.simplify(self.operation))
         self.operation = str(sym.sympify('1/' + temp))
         self.get_result()
 
@@ -94,8 +111,8 @@ class Calculator:
         # row 9
         tk.Button(self.window, NUMBER_BTN_PARAMS, text='0',
                   command=lambda: self.click('0')).grid(row=9, column=2, sticky="nsew")
-        tk.Button(self.window, NUMBER_BTN_PARAMS, text='.',
-                  command=lambda: self.click('.')).grid(row=9, column=3, sticky="nsew")
+        tk.Button(self.window, NUMBER_BTN_PARAMS, text=DOT,
+                  command=lambda: self.click(DOT)).grid(row=9, column=3, sticky="nsew")
         tk.Button(self.window, NUMBER_BTN_PARAMS, text='=',
                   command=self.equal).grid(row=9, column=4, sticky="nsew")
         tk.Button(self.window, NUMBER_BTN_PARAMS, text='\u00B1',
@@ -130,10 +147,10 @@ class Calculator:
                   command=lambda: self.click('*')).grid(row=6, column=4, sticky="nsew")
 
         # row 4
-        tk.Button(self.window, bd=5, fg='#000', font=('sans-serif', 20, 'bold'),
-                  text='C', command=self.clear_one, bg='#db701f').grid(row=4, column=2, sticky="nsew")
-        tk.Button(self.window, bd=5, fg='#000', font=('sans-serif', 20, 'bold'),
-                  text='CE', command=self.clear_all, bg='#db701f').grid(row=4, column=3, sticky="nsew")
+        tk.Button(self.window, CLEAR_BTN_PARAMS,
+                  text='C', command=self.clear_one).grid(row=4, column=2, sticky="nsew")
+        tk.Button(self.window, CLEAR_BTN_PARAMS,
+                  text='CE', command=self.clear_all).grid(row=4, column=3, sticky="nsew")
         tk.Button(self.window, NUMBER_BTN_PARAMS, text='%',
                   command=self.percent).grid(row=4, column=1, sticky="nsew")
 
