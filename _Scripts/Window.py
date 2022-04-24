@@ -1,5 +1,7 @@
+import ctypes
 from Common import *
 from Scientific import *
+from Plotting import *
 import tkinter as tk
 
 
@@ -8,7 +10,8 @@ class Window:
         self.window = tk.Tk()
         self.activeCalc = ''
         self.place_menu()
-        self.show_scientific()
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
+        self.show_plotting()
 
     def show_common(self):
         self.close_last()
@@ -20,6 +23,12 @@ class Window:
         self.close_last()
 
         self.activeCalc = Scientific(self.window)
+        self.show_new()
+
+    def show_plotting(self):
+        self.close_last()
+
+        self.activeCalc = Plotting(self.window)
         self.show_new()
 
     def close_last(self):
@@ -39,6 +48,7 @@ class Window:
 
         file_menu.add_command(label="Scientific", command=self.show_scientific)
         file_menu.add_command(label="Common", command=self.show_common)
+        file_menu.add_command(label="Plotting", command=self.show_plotting)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.window.destroy)
         menu.add_cascade(label="Mode", menu=file_menu)
