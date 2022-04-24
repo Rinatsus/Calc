@@ -1,12 +1,11 @@
 import tkinter as tk
 from Config import *
 from Constans import *
-
+import sympy as sym
 
 class Calculator:
     def __init__(self, window):
         self.window = window
-
         self.operation = ''
 
         self.window.configure(bg=BACKGROUND_COLOR, bd=BORDER_WIDTH)
@@ -25,24 +24,30 @@ class Calculator:
     def hide(self):
         self.window.destroy()
 
-    def equal(self):
-        temp = str(eval(self.operation))
-        self.operation = temp
-        self.get_result()
+    def equal(self, callback=None):
+
+        self.operation = self.get_result()
+
+
+        if callback is not None:
+            callback()
 
     def clear_all(self):
         self.operation = ''
         self.input_field.set("")
 
     def clear_one(self):
-        self.operation = self.operation[:-1]
+        self.operation = str(self.operation)[:-1]
         self.input_field.set(self.operation)
 
     def set_name(self, name):
         self.window.title(name)
 
     def get_result(self):
-        temp = eval(self.operation)
+        if (self.operation == ''):
+            self.operation = '0'
+
+        temp = sym.sympify(self.operation)
         result = get_int_or_float(temp)
         self.input_field.set(result)
         return result
@@ -50,9 +55,10 @@ class Calculator:
     def click(self, char: str, val=''):
         if val == '':
             val = char
-
-        self.input_field.set(self.operation + char)
+        self.operation = str(self.operation)
+        self.input_field.set(str(self.operation) + char)
         self.operation += str(val)
+
 
     def change_sign(self):
         if self.operation[0] == '-':
@@ -63,13 +69,13 @@ class Calculator:
             self.input_field.set(self.operation)
 
     def percent(self):
-        temp = str(eval(self.operation + '/100'))
+        temp = str(sym.sympify(self.operation + '/100'))
         self.operation = temp
         self.get_result()
 
     def square(self):
         if int(self.operation) >= 0:
-            temp = str(eval(self.operation + '**(1/2)'))
+            temp = str(sym.sympify(self.operation + '**(1/2)'))
             self.operation = temp
         else:
             self.operation = "ERROR"
@@ -78,7 +84,7 @@ class Calculator:
 
     def one_divide(self):
         temp = str(eval(self.operation))
-        self.operation = str(eval('1/' + temp))
+        self.operation = str(sym.sympify('1/' + temp))
         self.get_result()
 
     def extend(self):
@@ -91,7 +97,7 @@ class Calculator:
         tk.Button(self.window, NUMBER_BTN_PARAMS, text='.',
                   command=lambda: self.click('.')).grid(row=9, column=3, sticky="nsew")
         tk.Button(self.window, NUMBER_BTN_PARAMS, text='=',
-                  command=self.equal).grid(row=9, columnspan=2, column=4, sticky="nsew")
+                  command=self.equal).grid(row=9, column=4, sticky="nsew")
         tk.Button(self.window, NUMBER_BTN_PARAMS, text='\u00B1',
                   command=self.change_sign).grid(row=9, column=1, sticky="nsew")
 
