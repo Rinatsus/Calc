@@ -1,12 +1,46 @@
-from numpy import *
 import math
+import sympy as sym
 
 
-def get_int_or_float(num):
-    if abs(int(num) - float(num)) == 0:
-        return int(num)
-    else:
-        return float(num)
+def get_int_or_float(value):
+    if sym.Mul(value):
+        return value
+    elif sym.Integer(value):
+        return int(value)
+    elif sym.Float(value):
+        return float(value)
+
+
+def get_points(nums, expr):
+    arr = []
+    x = sym.Symbol("x")
+    for num in nums:
+        temp = expr.subs(x, num)
+        arr.append(temp)
+    return arr
+
+
+def get_point(num, expr):
+    x = sym.Symbol("x")
+    return expr.subs(x, num)
+
+
+def get_formatted_expression(expr):
+    new_expr = str(expr)
+    if new_expr == '' or new_expr == '0':
+        return sym.sympify(0)
+
+    find = new_expr.rfind('=')
+    if find != -1:
+        left = new_expr[:find]
+        rigth = new_expr[find + 1:]
+
+        if (rigth == '0' or rigth == ''):
+            new_expr = left
+        else:
+            new_expr = left + '-(' + rigth + ')'
+
+    return sym.sympify(new_expr)
 
 
 sin = math.sin
