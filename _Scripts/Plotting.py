@@ -1,6 +1,7 @@
 from Scientific import *
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 
 
@@ -19,6 +20,10 @@ class Plotting(Scientific):
         self.ax.grid(which='minor',
                      color='k',
                      linestyle=':')
+
+        axis = plt.gca()
+        axis.axhline(y=0, color='k')
+        axis.axvline(x=0, color='k')
 
         self.show_plot()
 
