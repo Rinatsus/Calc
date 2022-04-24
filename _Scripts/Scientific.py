@@ -1,11 +1,12 @@
 from Calculator import *
 from Memory import *
 
+
 class Scientific(Calculator):
     def __init__(self, window):
         super(Scientific, self).__init__(window)
         self.set_name(NAME + SCIENTIFIC)
-        self.memory = Memory(window)
+        self.place_memory()
 
     def solve_sin(self):
         temp_op = str(sin(eval(self.operation)))
@@ -61,6 +62,15 @@ class Scientific(Calculator):
         temp = '0' if self.operation == '' else eval(self.operation)
         self.memory.add_cell(temp)
 
+    def place_memory(self):
+        self.memory = Memory(self.window)
+        tk.Button(self.window, MEMORY_BTN_PARAMS, text='M+',
+                  command=lambda: self.memory.add_result(self.get_result())).grid(row=2, column=4, sticky="nsew")
+        tk.Button(self.window, MEMORY_BTN_PARAMS, text='M-',
+                  command=lambda: self.memory.substrate_result(self.get_result())).grid(row=3, column=4, sticky="nsew")
+        tk.Button(self.window, MEMORY_BTN_PARAMS, text='M',
+                  command=self.add_memory_cell).grid(row=4, column=4, sticky="nsew")
+
     def extend(self):
         # row 2
         tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="sin(n)",
@@ -104,15 +114,10 @@ class Scientific(Calculator):
                   command=lambda: self.click('e', f"{e}")).grid(row=4, column=0, sticky="nsew")
         tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="e",
                   command=lambda: self.click('e', f"{e}")).grid(row=4, column=0, sticky="nsew")
-        tk.Button(self.window, MEMORY_BTN_PARAMS, text='M',
-                  command=self.add_memory_cell).grid(row=4, column=4, sticky="nsew")
         # row 3
         tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text="exp",
                   command=self.solve_exp).grid(row=3, column=0, sticky="nsew")
-        tk.Button(self.window, MEMORY_BTN_PARAMS, text='M-',
-                  command=lambda: self.memory.substrate_result(self.get_result())).grid(row=3, column=4, sticky="nsew")
+
         # row 2
         tk.Button(self.window, SCIENTIFIC_BTN_PARAMS, text='|x|',
                   command=self.solve_abs).grid(row=2, column=0, sticky="nsew")
-        tk.Button(self.window, MEMORY_BTN_PARAMS, text='M+',
-                  command=lambda: self.memory.add_result(self.get_result())).grid(row=2, column=4, sticky="nsew")
