@@ -44,5 +44,7 @@ CLEAR_BTN_PARAMS = {'bd': 5, 'fg': '#000', 'bg': '#db701f', 'font': ('sans-serif
 
 MAX_MEMORY_CELLS = 4
 
-SCIENTIFIC_DATA_PATH = '../Resources/Saved/Data.txt'
-PLOT_DATA_PATH = '../Resources/Saved/Plot.txt'
+DIR_DATA_PATH = '../Resources/Saved/'
+SCIENTIFIC_DATA_PATH = DIR_DATA_PATH + 'Data.txt'
+PLOT_DATA_PATH = DIR_DATA_PATH + '/Plot.txt'
+
