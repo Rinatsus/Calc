@@ -3,15 +3,15 @@ import sympy as sym
 
 
 def get_int_or_float(value):
-    if sym.Mul(value):
-        return value
-    elif sym.Integer(value):
+    value = sym.sympify(value)
+    if math.fabs(value - int(value)) == 0:
         return int(value)
-    elif sym.Float(value):
+    else:
         return float(value)
 
 
-def get_points(nums, expr):
+
+def interpolate(nums, expr):
     arr = []
     x = sym.Symbol("x")
     for num in nums:
@@ -19,10 +19,6 @@ def get_points(nums, expr):
         arr.append(temp)
     return arr
 
-
-def get_point(num, expr):
-    x = sym.Symbol("x")
-    return expr.subs(x, num)
 
 
 def get_formatted_expression(expr):
@@ -35,7 +31,7 @@ def get_formatted_expression(expr):
         left = new_expr[:find]
         rigth = new_expr[find + 1:]
 
-        if (rigth == '0' or rigth == ''):
+        if rigth == '0' or rigth == '':
             new_expr = left
         else:
             new_expr = left + '-(' + rigth + ')'
@@ -55,4 +51,4 @@ ln = math.log
 
 exp = math.exp
 e = math.e
-p = math.pi
+pi = math.pi
