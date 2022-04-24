@@ -108,7 +108,7 @@ class Plotting(Scientific):
         self.canvas.draw()
 
     def load(self):
-        if os.path.exists(PLOT_DATA_PATH) == False:
+        if not os.path.exists(PLOT_DATA_PATH):
             return
 
         with open(PLOT_DATA_PATH, 'r') as file:
@@ -117,6 +117,9 @@ class Plotting(Scientific):
             self.equal()
 
     def save(self):
+        if not os.path.exists(SCIENTIFIC_DATA_PATH):
+            os.mkdir(DIR_DATA_PATH)
+
         with open(PLOT_DATA_PATH, 'w') as file:
             file.write(str(self.operation))
 
