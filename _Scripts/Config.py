@@ -19,13 +19,15 @@ MINUS = '-'
 SUB = '/'
 MUL = "*"
 POW = '**'
+EQ = '='
 
 CHARS = [
     PLUS,
     MINUS,
     SUB,
     MUL,
-    POW
+    POW,
+    EQ
 ]
 
 GEOMETRY = '400x500'
@@ -48,3 +50,6 @@ DIR_DATA_PATH = '../Resources/Saved/'
 SCIENTIFIC_DATA_PATH = DIR_DATA_PATH + 'Data.txt'
 PLOT_DATA_PATH = DIR_DATA_PATH + '/Plot.txt'
 
+NUMS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+ACCUARY = 50
