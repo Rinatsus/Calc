@@ -3,61 +3,42 @@ from Memory import *
 
 
 class Scientific(Calculator):
-    def __init__(self, window: tk.Tk, menu = None):
+    def __init__(self, window: tk.Tk, menu=None):
         super(Scientific, self).__init__(window)
         self.set_name(NAME + SCIENTIFIC)
         if menu is not None:
             self.place_memory(menu)
 
     def solve_sin(self):
-        temp_op = str(sin(eval(self.operation)))
-        self.operation = temp_op
-        self.get_result()
+        self.solve(lambda: str(sin(sym.sympify(self.operation))))
 
     def solve_cos(self):
-        temp_op = str(cos(eval(self.operation)))
-        self.operation = temp_op
-        self.get_result()
+        self.solve(lambda: str(cos(sym.sympify(self.operation))))
 
     def solve_tan(self):
-        temp_op = str(tan(eval(self.operation)))
-        self.operation = temp_op
-        self.get_result()
+        self.solve(lambda: str(tan(sym.sympify(self.operation))))
+
 
     def solve_factorial(self):
-        temp_op = str(fac(eval(self.operation)))
-        self.operation = temp_op
-        self.get_result()
+        self.solve(lambda: str(fac(sym.simplify(self.operation))))
 
     def pow(self, num):
-        temp = str(pow(eval(self.operation), num))
-        self.operation = temp
-        self.get_result()
+        self.solve(lambda: str(pow(eval(self.operation), num)))
 
     def solve_ten_in_pow(self):
-        temp = str(pow(10, eval(self.operation)))
-        self.operation = temp
-        self.get_result()
+        self.solve(lambda: str(pow(10, sym.sympify(self.operation))))
 
     def solve_ln(self):
-        temp = str(ln(eval(self.operation)))
-        self.operation = temp
-        self.get_result()
+        self.solve(lambda: str(ln(sym.sympify(self.operation))))
 
     def solve_log10(self):
-        temp = str(log(eval(self.operation)))
-        self.operation = temp
-        self.get_result()
+        self.solve(lambda: str(log(sym.sympify(self.operation))))
 
     def solve_abs(self):
-        temp = str(abs(eval(self.operation)))
-        self.operation = temp
-        self.get_result()
+        self.solve(lambda: str(abs(sym.sympify(self.operation))))
 
     def solve_exp(self):
-        temp = str(exp(eval(self.operation)))
-        self.operation = temp
-        self.get_result()
+        self.solve(lambda: str(exp(sym.sympify(self.operation))))
 
     def add_memory_cell(self):
         value = '0' if self.operation == '' else sym.sympify(self.operation)
