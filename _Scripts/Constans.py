@@ -1,14 +1,24 @@
 import math
 import sympy as sym
+import numpy as np
 
 
 def get_int_or_float(value):
-    value = sym.sympify(value)
+    value = sym.simplify(value).n()
+
+    temp2 = str(value)
+
+    temp2 = temp2.replace("*I", '')
+    temp2 = temp2.replace("-I", '')
+    temp2 = temp2.replace("+I", '')
+    temp2 = temp2.replace("I", '')
+
+    value = sym.simplify(temp2)
+
     if math.fabs(value - int(value)) == 0:
         return int(value)
     else:
         return float(value)
-
 
 
 def interpolate(nums, expr):
@@ -18,7 +28,6 @@ def interpolate(nums, expr):
         temp = expr.subs(x, num)
         arr.append(temp)
     return arr
-
 
 
 def get_formatted_expression(expr):
@@ -51,4 +60,5 @@ ln = math.log
 
 exp = math.exp
 e = math.e
-pi = math.pi
+pi = 3.14
+tol = 10
