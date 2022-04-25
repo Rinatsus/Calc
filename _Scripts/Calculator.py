@@ -2,8 +2,7 @@ import tkinter as tk
 from Config import *
 from Constans import *
 import sympy as sym
-import  ctypes
-
+import ctypes
 
 
 class Calculator:
@@ -78,6 +77,7 @@ class Calculator:
         self.operation += str(val)
 
     def change_sign(self):
+        self.operation = str(self.operation)
         if self.operation[0] == '-':
             self.operation = self.operation[1:]
             self.input_field.set(self.operation)
@@ -86,20 +86,35 @@ class Calculator:
             self.input_field.set(self.operation)
 
     def percent(self):
-        temp = str(sym.sympify(self.operation + '/100'))
+        if self.input_field.get() == '':
+            return
+        try:
+            temp = str(sym.sympify(self.operation + '/100'))
+        except Exception:
+            ctypes.windll.user32.MessageBoxW(0, u"Error", u"Invalid operation", 0)
+            return
         self.operation = temp
         self.get_result()
 
-    def square(self):
-        if int(self.operation) >= 0:
-            temp = str(sym.sympify(self.operation + '**(1/2)'))
-            self.operation = temp
-        else:
-            self.operation = "ERROR"
+    def solve(self, action):
+        if self.operation == '':
+            return
 
-        self.get_result()
+        try:
+            temp = action()
+            self.operation = temp
+            self.get_result()
+            return temp
+
+        except Exception:
+            ctypes.windll.user32.MessageBoxW(0, u"Error", u"Invalid operation", 0)
+
+    def square(self):
+        self.solve(lambda: str(sym.sympify(self.operation + '**(1/2)')))
 
     def one_divide(self):
+        if self.input_field.get() == '':
+            return
         temp = str(sym.simplify(self.operation))
         self.operation = str(sym.sympify('1/' + temp))
         self.get_result()
