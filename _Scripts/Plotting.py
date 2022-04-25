@@ -1,7 +1,6 @@
 from Scientific import *
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 import matplotlib.pyplot as plt
-import numpy as np
 import os
 
 
@@ -37,11 +36,24 @@ class Plotting(Scientific):
         self.points_x = []
         self.input_field.set(self.operation)
         self.roots = sym.solve(sym.Eq(self.operation, 0), self.x)
+        if len(self.roots) > 0:
+            if self.roots[0] != 0 and len(self.roots) == 1:
+                self.roots.append(0)
+        else:
+            return
+
+        for i in range(len(self.roots)):
+            self.roots[i] = get_int_or_float(self.roots[i])
+
         self.roots = sorted(self.roots)
 
         for i in range(len(self.roots) - 1):
+            r1 = self.roots[i]
+            r2 = self.roots[i + 1]
+
             self.points_x = np.r_[self.points_x,
-                                  np.linspace(float(self.roots[i].n()), float(self.roots[i + 1].n()), 20)]
+                                  np.linspace(r1, r2, ACCUARY)]
+
         self.points_y = interpolate(self.points_x, self.operation)
 
         self.show_plot()
