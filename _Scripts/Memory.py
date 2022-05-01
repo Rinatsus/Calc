@@ -70,7 +70,7 @@ class Memory(tk.Frame):
         self.save()
 
     def save(self):
-        if not os.path.exists(SCIENTIFIC_DATA_PATH):
+        if not os.path.exists(DIR_DATA_PATH):
             os.mkdir(DIR_DATA_PATH)
 
         with open(SCIENTIFIC_DATA_PATH, 'w') as file:

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 
-class Plotting(Scientific):
+class Plotting(Calculator):
     def __init__(self, window, menu: tk.Menu):
         self.x = sym.Symbol('x')
         self.menu = menu
@@ -26,7 +26,7 @@ class Plotting(Scientific):
 
         self.draw_axis()
 
-    def equal(self, callback=None):
+    def solve(self, callback=None):
         try:
             self.operation = get_formatted_expression(self.operation)
         except Exception:
@@ -51,11 +51,9 @@ class Plotting(Scientific):
             r1 = self.roots[i]
             r2 = self.roots[i + 1]
 
-            self.points_x = np.r_[self.points_x,
-                                  np.linspace(r1, r2, ACCUARY)]
+            self.points_x = np.r_[self.points_x,np.linspace(r1, r2, ACCUARY)]
 
         self.points_y = interpolate(self.points_x, self.operation)
-
         self.show_plot()
 
     def draw_axis(self):
@@ -69,12 +67,6 @@ class Plotting(Scientific):
         axis.axhline(y=0, color='k')
         axis.axvline(x=0, color='k')
 
-    def place_memory(self):
-        pass
-
-    def hide(self):
-        plt.close()
-        super(Plotting, self).hide()
 
     def show_plot(self):
         self.plot_axis.plot(self.points_x, self.points_y)
@@ -126,10 +118,10 @@ class Plotting(Scientific):
         with open(PLOT_DATA_PATH, 'r') as file:
             self.operation = file.readline()
             self.input_field.set(self.operation)
-            self.equal()
+            self.solve()
 
     def save(self):
-        if not os.path.exists(SCIENTIFIC_DATA_PATH):
+        if not os.path.exists(DIR_DATA_PATH):
             os.mkdir(DIR_DATA_PATH)
 
         with open(PLOT_DATA_PATH, 'w') as file:

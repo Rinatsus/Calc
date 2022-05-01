@@ -26,15 +26,15 @@ class Calculator:
     def hide(self):
         self.window.destroy()
 
-    def equal(self, callback=None):
-        try:
-            self.operation = self.get_result()
-        except Exception:
-            ctypes.windll.user32.MessageBoxW(0, u"Error", u"Invalid operation", 0)
-            return
-
-        if callback is not None:
-            callback()
+    # def equal(self, callback=None):
+    #     try:
+    #         self.operation = self.get_result()
+    #     except Exception:
+    #         ctypes.windll.user32.MessageBoxW(0, u"Error", u"Invalid operation", 0)
+    #         return
+    #
+    #     if callback is not None:
+    #         callback()
 
     def clear_all(self):
         self.operation = ''
@@ -96,15 +96,16 @@ class Calculator:
         self.operation = temp
         self.get_result()
 
-    def solve(self, action):
+    def solve(self, action = None):
         if self.operation == '':
             return
 
         try:
-            temp = action()
-            self.operation = temp
-            self.get_result()
-            return temp
+            if action is not None:
+                self.operation = action()
+
+            self.operation = self.get_result()
+            return self.operation
 
         except Exception:
             ctypes.windll.user32.MessageBoxW(0, u"Error", u"Invalid operation", 0)
@@ -129,7 +130,7 @@ class Calculator:
         tk.Button(self.window, NUMBER_BTN_PARAMS, text=DOT,
                   command=lambda: self.click(DOT)).grid(row=9, column=3, sticky="nsew")
         tk.Button(self.window, NUMBER_BTN_PARAMS, text='=',
-                  command=self.equal).grid(row=9, column=4, sticky="nsew")
+                  command=self.solve).grid(row=9, column=4, sticky="nsew")
         tk.Button(self.window, NUMBER_BTN_PARAMS, text='\u00B1',
                   command=self.change_sign).grid(row=9, column=1, sticky="nsew")
 

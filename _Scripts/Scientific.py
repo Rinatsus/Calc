@@ -3,11 +3,10 @@ from Memory import *
 
 
 class Scientific(Calculator):
-    def __init__(self, window: tk.Tk, menu=None):
+    def __init__(self, window: tk.Tk, menu):
         super(Scientific, self).__init__(window)
         self.set_name(NAME + SCIENTIFIC)
-        if menu is not None:
-            self.place_memory(menu)
+        self.place_memory(menu)
 
     def solve_sin(self):
         self.solve(lambda: str(sin(sym.sympify(self.operation))))

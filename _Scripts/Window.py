@@ -10,12 +10,12 @@ class Window:
         self.window = tk.Tk()
         self.activeCalc = ''
         self.place_menu()
+        # Устанвливает DPI в отличный от 100%
         ctypes.windll.shcore.SetProcessDpiAwareness(1)
-        self.show_plotting()
+        self.show_common()
 
     def show_common(self):
         self.close_last()
-
         self.activeCalc = Common(self.window)
         self.show_new()
 
@@ -26,7 +26,6 @@ class Window:
 
     def show_plotting(self):
         self.close_last()
-
         self.activeCalc = Plotting(self.window, self.menu)
         self.show_new()
 
@@ -34,12 +33,13 @@ class Window:
         if self.activeCalc != '':
             self.activeCalc.hide()
             self.window = tk.Tk()
+            self.activeCalc = ''
             self.place_menu()
 
     def show_new(self):
         if self.activeCalc != '':
             self.activeCalc.show()
-            self.window = tk.Tk()
+
 
     def place_menu(self):
         self.menu = tk.Menu(self.window)
